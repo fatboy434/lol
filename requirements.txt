@@ -1,0 +1,13 @@
+pyautogui
+speechrecognition
+pytesseract
+opencv-python
+pillow
+pyttsx3
+keyboard
+mouse
+numpy
+torch
+torchvision
+tk
+requests
