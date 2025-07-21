@@ -1,0 +1,41 @@
+{
+    "ScreenAnalysisAgent": {
+        "path": "agents/screen_analysis_agent.py"
+    },
+    "DecisionAgent": {
+        "path": "agents/decision_agent.py"
+    },
+    "ActionAgent": {
+        "path": "agents/action_agent.py"
+    },
+    "SpeechAgent": {
+        "path": "agents/speech_agent.py"
+    },
+    "MemoryAgent": {
+        "path": "agents/memory_agent.py"
+    },
+    "ProfitSeekerAgent": {
+        "path": "agents/profit_seeker_agent.py"
+    },
+    "DashboardAgent": {
+        "path": "agents/dashboard_agent.py"
+    },
+    "DebugAgent": {
+        "path": "agents/debug_agent.py"
+    },
+    "EmotionAgent": {
+        "path": "agents/emotion_agent.py"
+    },
+    "RoutineAgent": {
+        "path": "agents/routine_agent.py"
+    },
+    "WebAgent": {
+        "path": "agents/web_agent.py"
+    },
+    "TrainingAgent": {
+        "path": "agents/training_agent.py"
+    },
+    "VisionModuleAgent": {
+        "path": "agents/vision_module_agent.py"
+    }
+}

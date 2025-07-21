@@ -11,3 +11,10 @@ torch
 torchvision
 tk
 requests
+beautifulsoup4
+selenium
+pvporcupine
+pyaudio
+nrclex
+whisper
+python-docx
