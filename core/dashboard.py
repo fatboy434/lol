@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
+import os
 
 class Dashboard:
     def __init__(self, root, ai_core, dispatcher):
@@ -48,6 +49,12 @@ class Dashboard:
         self.recover_button = ttk.Button(error_console_frame, text="Recover", command=self.recover)
         self.recover_button.grid(row=1, column=0, sticky=tk.E)
 
+        # Create the module map frame
+        module_map_frame = ttk.LabelFrame(main_frame, text="Module Map")
+        module_map_frame.grid(row=0, column=2, rowspan=4, sticky=(tk.W, tk.E, tk.N, tk.S))
+        self.module_map_canvas = tk.Canvas(module_map_frame, width=400, height=400)
+        self.module_map_canvas.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+
     def update_logs(self, message):
         self.logs_text.insert(tk.END, message + "\n")
         self.logs_text.see(tk.END)
@@ -67,3 +74,16 @@ class Dashboard:
 
     def recover(self):
         self.ai_core.dispatcher.send_message("DebugAgent", {"type": "recover"})
+
+    def draw_module_map(self, dependencies):
+        self.module_map_canvas.delete("all")
+        # This is a simplified version that just draws a circle for each module.
+        # A more robust solution would also draw lines to represent the dependencies.
+        x, y = 50, 50
+        for module in dependencies:
+            self.module_map_canvas.create_oval(x, y, x + 50, y + 50, fill="lightblue")
+            self.module_map_canvas.create_text(x + 25, y + 25, text=os.path.basename(module))
+            x += 100
+            if x > 350:
+                x = 50
+                y += 100

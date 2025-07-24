@@ -1,15 +1,18 @@
 import tkinter as tk
 from tkinter import ttk
+from tkinter import filedialog
 import os
 import sys
 import subprocess
 import json
 import threading
 import winreg
-import sys
-import os
 sys.path.append(os.path.join(os.path.dirname(__file__), "core"))
 from github_api import GitHubAPI
+from builder.module_analyzer import ModuleAnalyzer
+from builder.project_organizer import ProjectOrganizer
+from builder.message_injector import MessageInjector
+from builder.main_file_generator import MainFileGenerator
 
 VERSION = "1.0.0"
 
@@ -19,6 +22,7 @@ class LauncherController:
         self.processes = {}
         self.config = self.load_config()
         self.launcher.create_status_lights(self.config.keys())
+        self.dashboard = None
 
     def load_config(self):
         with open("launcher_config.json", "r") as f:
@@ -82,6 +86,30 @@ class LauncherController:
         else:
             print("You are using the latest version.")
 
+    def synchronize(self):
+        files = filedialog.askopenfilenames(title="Select Python files to synchronize", filetypes=[("Python files", "*.py")])
+        if not files:
+            return
+
+        analyzer = ModuleAnalyzer(files)
+        dependencies, conflicts = analyzer.analyze()
+        print("Dependencies:", dependencies)
+        print("Conflicts:", conflicts)
+        if self.dashboard:
+            self.dashboard.draw_module_map(dependencies)
+
+        organizer = ProjectOrganizer(files)
+        organizer.organize()
+
+        main_file = os.path.join(organizer.output_dir, "main.py")
+        injector = MessageInjector(main_file)
+        for file_path in files:
+            if "main" not in file_path.lower() and "launcher" not in file_path.lower():
+                injector.inject(os.path.join(organizer.output_dir, "modules", os.path.basename(file_path)))
+
+        generator = MainFileGenerator(files, organizer.output_dir)
+        generator.generate()
+
 class Launcher:
     def __init__(self, root):
         self.root = root
@@ -116,6 +144,8 @@ class Launcher:
         self.remove_from_startup_button.grid(row=1, column=1)
         self.check_for_updates_button = ttk.Button(control_buttons_frame, text="Check for Updates", command=self.controller.check_for_updates)
         self.check_for_updates_button.grid(row=1, column=2)
+        self.synchronize_button = ttk.Button(control_buttons_frame, text="Synchronize", command=self.controller.synchronize)
+        self.synchronize_button.grid(row=1, column=3)
 
     def create_status_lights(self, modules):
         for i, module_name in enumerate(modules):

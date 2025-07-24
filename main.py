@@ -68,16 +68,25 @@ class MasterController:
 
     def start_system(self):
         python_executable = os.path.join(self.venv_dir, "Scripts", "python") if sys.platform == "win32" else os.path.join(self.venv_dir, "bin", "python")
+        pyinstaller_executable = os.path.join(self.venv_dir, "Scripts", "pyinstaller") if sys.platform == "win32" else os.path.join(self.venv_dir, "bin", "pyinstaller")
+
         while True:
             try:
                 if not self.check_port(1234):
                     print("Waiting for LM Studio to be available...")
                     time.sleep(5)
                     continue
-                process = subprocess.Popen([python_executable, self.main_script], stderr=subprocess.PIPE)
-                _, stderr = process.communicate()
-                if process.returncode != 0:
-                    self.log_error(stderr.decode())
+
+                build_command = [
+                    pyinstaller_executable,
+                    "--noconfirm",
+                    "sentinel.spec",
+                ]
+
+                subprocess.check_call(build_command)
+
+                process = subprocess.Popen(["dist/output.exe"])
+                process.wait()
             except KeyboardInterrupt:
                 print("Shutting down...")
                 process.kill()
