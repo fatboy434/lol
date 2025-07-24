@@ -18,3 +18,4 @@ pyaudio
 nrclex
 whisper
 python-docx
+redis

@@ -1,11 +1,13 @@
 import queue
 import threading
+from core.shared_state import SharedState
 
 class CentralDispatcher:
     def __init__(self):
         self.agents = {}
         self.message_queues = {}
         self.lock = threading.Lock()
+        self.shared_state = SharedState()
 
     def register_agent(self, agent_name, agent_instance):
         """

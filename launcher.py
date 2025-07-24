@@ -6,6 +6,12 @@ import subprocess
 import json
 import threading
 import winreg
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), "core"))
+from github_api import GitHubAPI
+
+VERSION = "1.0.0"
 
 class LauncherController:
     def __init__(self, launcher):
@@ -67,6 +73,15 @@ class LauncherController:
             winreg.DeleteValue(registry_key, "SentinelAI")
         print("Removed from startup.")
 
+    def check_for_updates(self):
+        github_api = GitHubAPI("fatboy434", "sentinel-ai")
+        latest_release = github_api.get_latest_release()
+        if latest_release and latest_release["tag_name"] > VERSION:
+            print(f"A new version is available: {latest_release['tag_name']}")
+            # In a real implementation, this would prompt the user to update.
+        else:
+            print("You are using the latest version.")
+
 class Launcher:
     def __init__(self, root):
         self.root = root
@@ -99,6 +114,8 @@ class Launcher:
         self.add_to_startup_button.grid(row=1, column=0)
         self.remove_from_startup_button = ttk.Button(control_buttons_frame, text="Remove from Startup", command=self.controller.remove_from_startup)
         self.remove_from_startup_button.grid(row=1, column=1)
+        self.check_for_updates_button = ttk.Button(control_buttons_frame, text="Check for Updates", command=self.controller.check_for_updates)
+        self.check_for_updates_button.grid(row=1, column=2)
 
     def create_status_lights(self, modules):
         for i, module_name in enumerate(modules):
